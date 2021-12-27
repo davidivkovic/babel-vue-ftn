@@ -212,6 +212,8 @@ export default {
 With no module resolution algorithms or bundling available, we have to specify
 module replacements manually.
 
+Place this file in your project root.
+
 Example configuration:
 
 `imports.config.js`
