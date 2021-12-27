@@ -212,9 +212,14 @@ export default {
 With no module resolution algorithms or bundling available, we have to specify
 module replacements manually.
 
-Place this file in your project root.
 
-Example configuration:
+You can get npm modules off of CDNs such as 
+- [`unpkg`](https://unpkg.com/)
+- [`skypack`](https://www.skypack.dev/)
+- [`cdnjs`](https://cdnjs.com/)
+
+
+Example configuration (place this file in your project root):
 
 `imports.config.js`
 ```js
