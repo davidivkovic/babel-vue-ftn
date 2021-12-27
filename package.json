@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "prettier-plugin-organize-imports": "^2.3.4"
+  },
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "command-line-args": "^5.2.0",
+    "command-line-usage": "^6.1.1",
+    "dedent-js": "^1.0.1",
+    "glob": "^7.2.0",
+    "js-beautify": "^1.14.0",
+    "mz": "^2.7.0",
+    "prettier": "^2.4.1",
+    "terser": "^5.10.0",
+    "vue": "^3.2.22"
+  }
+}
