@@ -261,7 +261,6 @@ const importOptions = {
 */
 const excludedLibraries = [
   'vue@3.2.21.esm.min.prod.js',
-  'tailwind@3.0.0-alpha.2.js',
   'date-fns@2.26.0.esm.min.js'
 ]
 
