@@ -1,4 +1,4 @@
-# babel-transform-vue-ftn
+# babel-vue-ftn
 Transpiles a vue-cli project into a non-bundled, non node-dependent project.
 
 ## Goals
