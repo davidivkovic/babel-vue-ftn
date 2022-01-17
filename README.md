@@ -282,6 +282,8 @@ babel-transform-vue-ftn
 Options
 
   -i, --input string   The root directory of the project to transpile.
+  -o, --output string  The output directory where the built files will be placed.
+                       The default is /dist under the project root.
   -h, --help           Print this usage guide.
 ```
 
