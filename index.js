@@ -6,7 +6,8 @@ import glob from 'glob'
 import fs from 'mz/fs.js'
 import prettier from 'prettier'
 import beautify from 'js-beautify'
-import { parse } from 'path'
+import { dirname, parse } from 'path'
+import { fileURLToPath } from 'url'
 import chalk from 'chalk'
 import commandLineUsage from 'command-line-usage'
 import commandLineArgs from 'command-line-args'
@@ -26,7 +27,6 @@ import {
   compileStyle
 } from 'vue/compiler-sfc'
 import { exit } from 'process'
-import url from 'url'
 
 const sections = [
   {
@@ -79,24 +79,39 @@ try {
   exit(1)
 }
 
-if (!fs.existsSync(`${cwd}/${importsConfigName}`)) {
+let importsConfigPath = `${cwd}/${importsConfigName}`
+
+if (!fs.existsSync(importsConfigPath)) {
   console.error(`No ${chalk.yellow(importsConfigName)} found at project root ${chalk.cyan(cwd)}`)
   exit(1)
 }
 
 // Copy the config from the project root because node is retarded and cannot resolve remote
-// esm without thhe project package.json conatining type:module 
+// esm without the project package.json conatining type:module 
+// const localImportsConfigPath = dirname(fileURLToPath(import.meta.url)) + '/' + importsConfigName
 
-let importsConfigPath = `${cwd}/${importsConfigName}`
-
-fs.copyFileSync(importsConfigPath, `./${importsConfigName}`)
-let { importOptions, excludedLibraries } = await import(`./${importsConfigName}`)
-fs.rmSync(`./${importsConfigName}`)
+// fs.copyFileSync(importsConfigPath, localImportsConfigPath)
+let { importOptions, excludedLibraries } = await import('./' + importsConfigName)
+// fs.rmSync(localImportsConfigPath)
 
 const distPath = 'dist'
 const outDirectory = `${cwd}/${distPath}`
 
-const typesToLoad = ['vue', 'js', 'jpeg', 'jpg', 'png', 'svg', 'json', 'ico', 'woff2'].join('|')
+const typesToLoad = [
+  'vue',
+  'js', 
+  'jpeg', 
+  'jpg', 
+  'png', 
+  'svg', 
+  'json', 
+  'ico',
+  'woff',
+  'woff2', 
+  'ttf', 
+  'otf'
+].join('|')
+
 const aliases = [
   {
     alias: '@/',
@@ -116,22 +131,29 @@ const indent = (content, amount) => {
 }
 
 const hasAliases = importPath => {
-  for (const alias of aliases) {
-    if (importPath.startsWith(alias.alias)) return true 
+  if(importPath) {
+    for (const alias of aliases) {
+      if (importPath.startsWith(alias.alias)) return true 
+    }
   }
   return false
 }
 
 const replaceAliases = importPath => {
-  aliases.forEach(a => importPath = importPath.replace(a.alias, a.replacement))
+  if(importPath) {
+    aliases.forEach(a => importPath = importPath.replace(a.alias, a.replacement))
+  }
   return importPath
 }
 
 const renameImports = importPath => {
-  const importName = importPath.split('/').pop()
-  let replacement = importName.replace('.vue', '.js')
-  replaceAliases(replacement)
-  return importPath.replace(importName, replacement)
+  if(importPath) {
+    const importName = importPath.split('/').pop()
+    let replacement = importName.replace('.vue', '.js')
+    replaceAliases(replacement)
+    return importPath.replace(importName, replacement)
+  } 
+  return importPath
 }
 
 const createDistSubdir = (subdir = '') => {
@@ -178,6 +200,11 @@ const babelPluginTransformVueTemplate = template => ({
 
 const babelPluginRenameImports = {
   visitor: {
+    StringLiteral: path => {
+      if (path.node.value.endsWith('.vue')) {
+        path.node.value = replaceAliases(renameImports(path.node.value))
+      }
+    },
     ImportDeclaration: path => {
       path.node.source.value = replaceAliases(renameImports(path.node.source.value))
     },
@@ -286,7 +313,7 @@ const vueLoader = (filePath, fileName, fileType) => {
   
 
   const babelScript = transformSync(script, {
-    retainLines: true,
+    retainLines: false,
     plugins: [
       ...babelPlugins,
       babelPluginTransformDirectoryImport(cwd, filePath, typesToLoad),
@@ -353,7 +380,7 @@ const loaders = [
     use: jsLoader
   },
   {
-    test: /\.jpeg|\.jpg|\.png|\.svg|\.json|\.woff2/,
+    test: /\.jpeg|\.jpg|\.png|\.svg|\.json|\.woff2|\.ttf|\.otf/,
     use: assetLoader
   },
   {
@@ -363,7 +390,7 @@ const loaders = [
 ]
 
 const buildEntrypoint = () => {
-  const stylesheets = cssFiles.map(url => `<link rel="stylesheet" href="${url}">`).join('\n')
+  const stylesheets = cssFiles.map(href => `<link rel="stylesheet" href="/${href}">`).join('\n')
   const html = `
     <!DOCTYPE html>
     <html lang="">
@@ -372,11 +399,12 @@ const buildEntrypoint = () => {
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <link rel="icon" href="favicon.ico">
+        <link rel="icon" href="/favicon.ico">
         <!-- Styles -->
+        <link rel="stylesheet" href="/index.css">
         ${stylesheets}
         <!-- Entrypoint -->
-        <script type="module" src="src/main.js"></script>
+        <script type="module" src="/src/main.js"></script>
       </head>
       <body>
         <div id="app"></div>

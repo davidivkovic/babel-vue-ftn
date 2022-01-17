@@ -2,9 +2,14 @@
   "type": "module",
   "devDependencies": {
     "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.4",
+    "@babel/register": "^7.4.4",
     "prettier-plugin-organize-imports": "^2.3.4"
   },
   "dependencies": {
+    "@babel/types": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "vue": "^3.2.22",
     "chalk": "^5.0.0",
     "command-line-args": "^5.2.0",
     "command-line-usage": "^6.1.1",
@@ -14,6 +19,6 @@
     "mz": "^2.7.0",
     "prettier": "^2.4.1",
     "terser": "^5.10.0",
-    "vue": "^3.2.22"
+    "is-valid-path": "^0.1.1"
   }
 }
