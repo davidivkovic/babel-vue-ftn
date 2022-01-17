@@ -43,6 +43,13 @@ const sections = [
         description: 'The root directory of the project to transpile.'
       },
       {
+        name: 'output',
+        alias: 'o',
+        typeLabel: '{underline string}',
+        description: `The output directory where the built files will be placed.
+                      The default is /dist under the project root.`
+      },
+      {
         name: 'help',
         alias: 'h',
         description: 'Print this usage guide.',
@@ -55,6 +62,7 @@ const usage = commandLineUsage(sections)
 
 const optionDefinitions = [
   { name: 'input', alias: 'i', type: String },
+  { name: 'output', alias: 'o', type: String },
   { name: 'help', alias: 'h', type: Boolean }
 ]
 
@@ -95,7 +103,11 @@ let { importOptions, excludedLibraries } = await import('./' + importsConfigName
 // fs.rmSync(localImportsConfigPath)
 
 const distPath = 'dist'
-const outDirectory = `${cwd}/${distPath}`
+let outDirectory = `${cwd}/${distPath}`
+
+if (options.output) {
+  outDirectory = options.output
+}
 
 const typesToLoad = [
   'vue',
