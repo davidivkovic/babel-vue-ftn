@@ -218,6 +218,9 @@ const babelPluginRenameImports = {
       }
     },
     ImportDeclaration: path => {
+      if (path.node.source.value === 'axios') {
+        path.node.source.value = importOptions.axios.transform
+      }
       path.node.source.value = replaceAliases(renameImports(path.node.source.value))
     },
     Function: (path, state) => {
@@ -355,7 +358,7 @@ const jsLoader = async (filePath, fileName, fileType) => {
   const script = readFile(filePath, fileName, fileType)
   let babelScript = transformSync(script, {
     ...(isSource && {
-      retainLines: true
+      retainLines: false
     }),
     plugins: [
       ...babelPlugins,

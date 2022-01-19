@@ -28,15 +28,7 @@ const importOptions = {
   },
   'axios': {
     transform: '/modules/axios@0.24.0.esm.min.js',
-    skipDefaultConversion: true
-  },
-  'vee-validate': {
-    transform: '/modules/vee-validate@4.5.6.esm.min.js',
-    skipDefaultConversion: true
-  },
-  '@vee-validate/rules': {
-    transform: '/modules/vee-validate-rules@4.5.6.esm.min.js',
-    skipDefaultConversion: true
+    skipDefaultConversion: false
   }
 }
 
@@ -48,7 +40,6 @@ const importOptions = {
 */
 const excludedLibraries = [
   'vue@3.2.21.esm.min.prod.js',
-  'tailwind@3.0.0-alpha.2.js',
   'date-fns@2.26.0.esm.min.js'
 ]
 
